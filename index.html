@@ -1,0 +1,203 @@
+﻿<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#163b35">
+  <title>Desa Remaja — Jelajah & Belajar</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <canvas id="world" aria-label="Dunia 3D Desa Remaja"></canvas>
+
+  <section id="title-screen" class="screen">
+    <div class="card">
+      <div class="eyebrow">Petualangan belajar interaktif</div>
+      <h1>DESA<br>REMAJA</h1>
+      <p class="subtitle">Belajar Pergaulan Sehat &amp; Karakter Generasi Muda</p>
+      <div class="profile-setup">
+        <label class="name-field" for="player-name">
+          Nama petualang
+          <input id="player-name" type="text" maxlength="20" autocomplete="given-name" placeholder="Tulis namamu" required>
+        </label>
+        <div class="avatar-heading">Pilih karakter</div>
+        <div class="avatar-picker" role="group" aria-label="Pilih karakter pemain">
+          <button class="avatar-option" type="button" data-avatar="forest" aria-pressed="false">
+            <span class="voxel-avatar forest" aria-hidden="true"></span>
+            <span>Rimba</span>
+          </button>
+          <button class="avatar-option selected" type="button" data-avatar="ocean" aria-pressed="true">
+            <span class="voxel-avatar ocean" aria-hidden="true"></span>
+            <span>Langit</span>
+          </button>
+          <button class="avatar-option" type="button" data-avatar="sunset" aria-pressed="false">
+            <span class="voxel-avatar sunset" aria-hidden="true"></span>
+            <span>Senja</span>
+          </button>
+        </div>
+        <p id="profile-error" class="profile-error hidden" role="alert">Masukkan nama sebelum mulai.</p>
+      </div>
+      <div class="instructions">
+        <strong>Jelajahi desa, temui 15 karakter, dan pelajari materinya.</strong><br>
+        <span class="desktop-instructions">
+          Bergerak <span class="key">W A S D</span> / <span class="key">↑ ↓ ← →</span><br>
+          Putar 360°: tahan klik kiri lalu geser<br>
+          Klik NPC/item atau tekan <span class="key">E</span> · Zoom dengan roda mouse<br>
+        </span>
+        <span class="mobile-instructions">
+          Gerakkan joystick kiri · Geser layar untuk melihat<br>
+          Dekati warga lalu tekan tombol INTERAKSI · Memancing lewat tombol di layar<br>
+        </span>
+        Memancing di Saung Pancing
+      </div>
+      <button id="start-button" class="primary">MULAI JELAJAH</button>
+      <p class="small-note">Selesaikan semua misi, lalu temui soal ujian di gedung pusat desa.<br>Untuk pengalaman terbaik, gunakan komputer dengan koneksi internet.</p>
+    </div>
+  </section>
+
+  <aside id="hud" class="hidden" aria-label="Daftar misi">
+    <h2>
+      <span class="hud-title">📍 Jurnal Desa</span>
+      <span class="hud-actions">
+        <button id="music-toggle" class="panel-toggle" type="button" aria-label="Nyalakan musik" aria-pressed="false" title="Nyalakan musik">♪</button>
+        <button id="hud-toggle" class="panel-toggle" type="button" aria-label="Minimalkan Jurnal Desa" aria-expanded="true" aria-controls="hud-content">−</button>
+      </span>
+    </h2>
+    <div id="hud-content">
+      <p id="player-greeting" class="player-greeting"></p>
+      <p class="hud-sub">Temui 15 warga dan pelajari materinya</p>
+      <ul id="mission-list"></ul>
+      <div id="exam-status">Gedung Ujian: 🔒 Selesaikan 15 misi untuk membuka ujian.</div>
+    </div>
+  </aside>
+  <aside id="map-panel" class="hidden" aria-label="Peta mini desa">
+    <div class="map-heading"><span>🧭 PETA DESA</span><button id="map-toggle" class="panel-toggle" type="button" aria-label="Minimalkan Peta Desa" aria-expanded="true" aria-controls="map-content">−</button></div>
+    <div id="map-content">
+      <svg id="mini-map" viewBox="0 0 200 200" role="img" aria-label="Peta kawasan desa">
+      <rect width="200" height="200" rx="14" class="map-grass"/>
+      <path d="M2 75 C18 74.2 28 75.8 44 75 S72 74.2 86 75 S114 75.8 130 75 S158 74.2 172 75 S188 75.8 198 75" class="map-river"/>
+      <path d="M100 68 V92 M69 93 H95 M105 93 H130 M69 93 V129 M90 93 V127 M105 93 V109 M105 109 H130 M130 93 V119 M68 77 H119 M68 129 H118 M90 113 H95 M96 129 V118 M69 108 H74 M69 116 H75 M130 97 H125 M130 113 H124 M104 122 V129 M130 119 H139 V126 H175 M145 126 H175 M145 126 V85 M175 126 V99 M175 130 H162 M139 126 V153 H145 V160 M175 126 V170 M175 140 H160 M148 140 H160" class="map-road-edge"/>
+      <path d="M100 68 V92 M69 93 H95 M105 93 H130 M69 93 V129 M90 93 V127 M105 93 V109 M105 109 H130 M130 93 V119 M68 77 H119 M68 129 H118 M90 113 H95 M96 129 V118 M69 108 H74 M69 116 H75 M130 97 H125 M130 113 H124 M104 122 V129 M130 119 H139 V126 H175 M145 126 H175 M145 126 V85 M175 126 V99 M175 130 H162 M139 126 V153 H145 V160 M175 126 V170 M175 140 H160 M148 140 H160" class="map-road"/>
+      <path d="M139 81 V70 H175" class="map-road-edge"/>
+      <path d="M139 81 V70 H175" class="map-road"/>
+      <circle cx="100" cy="100" r="10" class="map-plaza"/>
+      <path d="M100 70 V77 M139 70 V77" class="map-bridge"/>
+      <g class="map-buildings">
+        <rect x="83" y="103" width="7" height="6" rx="1"/><rect x="111" y="103" width="7" height="6" rx="1"/>
+        <rect x="84" y="88" width="7" height="6" rx="1"/><rect x="110" y="88" width="7" height="6" rx="1"/>
+        <rect x="95" y="116" width="6" height="6" rx="1"/><rect x="82" y="115" width="6" height="6" rx="1"/>
+        <rect x="129" y="105" width="7" height="6" rx="1"/><rect x="68" y="119" width="7" height="6" rx="1"/>
+        <rect x="145" y="105" width="8" height="7" rx="1"/><rect x="160" y="101" width="8" height="7" rx="1"/>
+        <rect x="159" y="146" width="8" height="7" rx="1"/><rect x="166" y="160" width="8" height="7" rx="1"/>
+        <rect x="142" y="60" width="7" height="6" rx="1"/><rect x="154" y="60" width="7" height="6" rx="1"/>
+        <rect x="167" y="60" width="7" height="6" rx="1"/>
+      </g>
+      <text x="100" y="102" class="map-plaza-label">ALUN-ALUN</text>
+      <circle cx="109" cy="68" r="3" class="map-fishing"/>
+      <circle id="map-player" cx="100" cy="100" r="4.3"/>
+      </svg>
+      <div class="map-legend"><span><i class="legend-player"></i> Kamu</span><span><i class="legend-building"></i> Desa</span><span><i class="legend-fishing"></i> Pancing</span></div>
+    </div>
+  </aside>
+  <div id="touch-controls" class="hidden" aria-label="Kontrol sentuh">
+    <div id="move-stick" role="application" aria-label="Joystick gerak">
+      <span class="stick-arrow stick-up">▲</span>
+      <span class="stick-arrow stick-down">▼</span>
+      <span class="stick-arrow stick-left">◀</span>
+      <span class="stick-arrow stick-right">▶</span>
+      <div id="move-knob"></div>
+      <span class="stick-caption">GERAK</span>
+    </div>
+    <div class="touch-buttons">
+      <div class="touch-zoom">
+        <button id="touch-zoom-in" type="button" aria-label="Perbesar tampilan">+</button>
+        <button id="touch-zoom-out" type="button" aria-label="Perkecil tampilan">−</button>
+      </div>
+      <button id="touch-pause" type="button" aria-label="Jeda permainan">Ⅱ</button>
+      <button id="touch-interact" type="button" aria-label="Berinteraksi">
+        <strong>E</strong><small>INTERAKSI</small>
+      </button>
+    </div>
+    <div class="look-instruction">Seret area kosong untuk melihat sekeliling</div>
+  </div>
+  <div id="hint" class="hidden"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <section id="dialog-screen" class="screen hidden">
+    <div class="card">
+      <div class="eyebrow" id="dialog-topic"></div>
+      <h2 id="dialog-name"></h2>
+      <p id="dialog-copy" class="dialog-copy"></p>
+      <div class="dialog-footer">
+        <span id="page-count"></span>
+        <button id="dialog-next" class="primary">LANJUT</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="quiz-screen" class="screen hidden">
+    <div id="quiz-card" class="card">
+      <div class="eyebrow">Ujian Akhir Desa Remaja</div>
+      <h2>Uji Pemahamanmu</h2>
+      <div id="quiz-progress"></div>
+      <div id="question"></div>
+      <div id="answers"></div>
+      <div id="quiz-feedback" aria-live="polite"></div>
+      <div id="quiz-next-row"><button id="quiz-next" class="primary" disabled>JAWAB &amp; LANJUT</button></div>
+    </div>
+  </section>
+
+  <section id="fishing-screen" class="screen hidden" aria-label="Permainan memancing">
+    <div class="card fishing-card">
+      <div class="eyebrow">Sungai Balai Desa · Desa Remaja</div>
+      <h2>🎣 Saung Pancing</h2>
+      <div class="fishing-stats">
+        <span>Umpan <strong id="fishing-bait">5</strong></span>
+        <span>Ikan <strong id="fishing-caught">0</strong></span>
+      </div>
+      <label class="fishing-meter">Kekuatan ikan <span id="fish-strength-text">100%</span>
+        <span class="meter-track"><span id="fish-strength-bar" class="meter-fill fish-strength-fill"></span></span>
+      </label>
+      <label class="fishing-meter">Ketegangan pancing <span id="line-tension-text">0%</span>
+        <span class="meter-track"><span id="line-tension-bar" class="meter-fill line-tension-fill"></span></span>
+      </label>
+      <p id="fishing-status" class="fishing-status" aria-live="polite">Siap melempar kail? Setiap lemparan memakai 1 umpan.</p>
+      <div class="fishing-actions">
+        <button id="fishing-action" class="primary" type="button">LEMPAR KAIL · SPASI</button>
+        <button id="fishing-close" class="secondary" type="button">SELESAI</button>
+      </div>
+      <p class="small-note">Saat ikan menyambar, tekan Spasi atau tombol Tarik berulang kali. Beri jeda jika tali menegang.</p>
+    </div>
+  </section>
+
+  <section id="result-screen" class="screen hidden">
+    <div class="card">
+      <div class="eyebrow" id="result-eyebrow">Hasil Ujian</div>
+      <h2 id="result-title"></h2>
+      <div id="result-score" class="result-score"></div>
+      <p id="result-copy" class="result-copy"></p>
+      <button id="restart-button" class="primary">ULANGI PERMAINAN</button>
+    </div>
+  </section>
+
+  <section id="pause-screen" class="screen hidden">
+    <div id="pause-card" class="card">
+      <div class="eyebrow">Desa menunggumu</div>
+      <h2>Permainan Dijeda</h2>
+      <p class="result-copy">Klik untuk kembali menjelajah.</p>
+      <button id="resume-button" class="primary">LANJUTKAN</button>
+    </div>
+  </section>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
+
+
