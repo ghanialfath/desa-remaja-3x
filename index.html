@@ -48,6 +48,7 @@
         <strong>Jelajahi desa, temui 15 karakter, dan pelajari materinya.</strong><br>
         <span class="desktop-instructions">
           Bergerak <span class="key">W A S D</span> / <span class="key">↑ ↓ ← →</span><br>
+          Lompat <span class="key">Spasi</span><br>
           Putar 360°: tahan klik kiri lalu geser<br>
           Klik NPC/item atau tekan <span class="key">E</span> · Zoom dengan roda mouse<br>
         </span>
@@ -58,7 +59,7 @@
         Memancing di Saung Pancing
       </div>
       <button id="start-button" class="primary">MULAI JELAJAH</button>
-      <p class="small-note">Selesaikan semua misi, lalu temui soal ujian di gedung pusat desa.<br>Untuk pengalaman terbaik, gunakan komputer dengan koneksi internet.</p>
+      <p class="small-note">Selesaikan semua misi, lalu temui soal ujian di dekat bukit, di depan rumah warga dan kantor desa.<br>Untuk pengalaman terbaik, gunakan komputer dengan koneksi internet.</p>
     </div>
   </section>
 
@@ -83,27 +84,33 @@
       <svg id="mini-map" viewBox="0 0 200 200" role="img" aria-label="Peta kawasan desa">
       <rect width="200" height="200" rx="14" class="map-grass"/>
       <path d="M2 75 C18 74.2 28 75.8 44 75 S72 74.2 86 75 S114 75.8 130 75 S158 74.2 172 75 S188 75.8 198 75" class="map-river"/>
-      <path d="M100 68 V92 M69 93 H95 M105 93 H130 M69 93 V129 M90 93 V127 M105 93 V109 M105 109 H130 M130 93 V119 M68 77 H119 M68 129 H118 M90 113 H95 M96 129 V118 M69 108 H74 M69 116 H75 M130 97 H125 M130 113 H124 M104 122 V129 M130 119 H139 V126 H175 M145 126 H175 M145 126 V85 M175 126 V99 M175 130 H162 M139 126 V153 H145 V160 M175 126 V170 M175 140 H160 M148 140 H160" class="map-road-edge"/>
-      <path d="M100 68 V92 M69 93 H95 M105 93 H130 M69 93 V129 M90 93 V127 M105 93 V109 M105 109 H130 M130 93 V119 M68 77 H119 M68 129 H118 M90 113 H95 M96 129 V118 M69 108 H74 M69 116 H75 M130 97 H125 M130 113 H124 M104 122 V129 M130 119 H139 V126 H175 M145 126 H175 M145 126 V85 M175 126 V99 M175 130 H162 M139 126 V153 H145 V160 M175 126 V170 M175 140 H160 M148 140 H160" class="map-road"/>
-      <path d="M139 81 V70 H175" class="map-road-edge"/>
-      <path d="M139 81 V70 H175" class="map-road"/>
+      <path d="M100 67 V92 M69 93 H95 M105 93 H131 M68 85 V121.4 H64.5 V129.5 H68 M90 93 V128 M83 93 V104 M105 93 V108 M105 108 H105.4 V119.4 H100 M105.4 117.4 H130.8 M130.8 86.3 V120 M68 129.5 H119 M75 130 V123 M113 130 V126 M105 121 V130 M100 130 V145.6 H113.4 M151 126.8 V140.5 H156.3 M117.4 117.4 V110.4 M68 109 H73 M68 87 H74 V83.8 M68 85.6 H79.2 V83.6 H80.6 M73.9 86.6 V92.6 H78.6 M130.8 102.7 H125.5 M130.8 111.7 H125.5 M104.3 79.1 V84.6 H108 M100 79.1 H104.3 M130.8 118.8 H140.2 V126.8 H177.1 M146.2 126.8 V123.5 M159 126.8 V123.8 M171.7 126.8 V124.8 M177.1 126.8 V83.9 M177.1 105.4 H167 V109.4 H161.6 M140.2 88.6 H151 V93.3 H156.3 M151 88.6 V101.5 H177.1 M130.8 86.3 H134.8 M140.2 126.8 V80.6 V68.8 H177.1 M100 67.2 H106.7 L109.4 69.9" class="map-road-edge"/>
+      <path d="M100 67 V92 M69 93 H95 M105 93 H131 M68 85 V121.4 H64.5 V129.5 H68 M90 93 V128 M83 93 V104 M105 93 V108 M105 108 H105.4 V119.4 H100 M105.4 117.4 H130.8 M130.8 86.3 V120 M68 129.5 H119 M75 130 V123 M113 130 V126 M105 121 V130 M100 130 V145.6 H113.4 M151 126.8 V140.5 H156.3 M117.4 117.4 V110.4 M68 109 H73 M68 87 H74 V83.8 M68 85.6 H79.2 V83.6 H80.6 M73.9 86.6 V92.6 H78.6 M130.8 102.7 H125.5 M130.8 111.7 H125.5 M104.3 79.1 V84.6 H108 M100 79.1 H104.3 M130.8 118.8 H140.2 V126.8 H177.1 M146.2 126.8 V123.5 M159 126.8 V123.8 M171.7 126.8 V124.8 M177.1 126.8 V83.9 M177.1 105.4 H167 V109.4 H161.6 M140.2 88.6 H151 V93.3 H156.3 M151 88.6 V101.5 H177.1 M130.8 86.3 H134.8 M140.2 126.8 V80.6 V68.8 H177.1 M100 67.2 H106.7 L109.4 69.9" class="map-road"/>
       <circle cx="100" cy="100" r="10" class="map-plaza"/>
-      <path d="M100 70 V77 M139 70 V77" class="map-bridge"/>
+      <rect x="106" y="131" width="17" height="12" rx="1" class="map-sports-field"/>
+      <path d="M106 137 H123 M114.5 131 V143 M106 131 H123 M106 143 H123" class="map-sports-lines"/>
+      <path d="M100 70 V77 M140 70 V77" class="map-bridge"/>
       <g class="map-buildings">
-        <rect x="83" y="103" width="7" height="6" rx="1"/><rect x="111" y="103" width="7" height="6" rx="1"/>
-        <rect x="84" y="88" width="7" height="6" rx="1"/><rect x="110" y="88" width="7" height="6" rx="1"/>
-        <rect x="95" y="116" width="6" height="6" rx="1"/><rect x="82" y="115" width="6" height="6" rx="1"/>
-        <rect x="129" y="105" width="7" height="6" rx="1"/><rect x="68" y="119" width="7" height="6" rx="1"/>
-        <rect x="145" y="105" width="8" height="7" rx="1"/><rect x="160" y="101" width="8" height="7" rx="1"/>
-        <rect x="159" y="146" width="8" height="7" rx="1"/><rect x="166" y="160" width="8" height="7" rx="1"/>
-        <rect x="142" y="60" width="7" height="6" rx="1"/><rect x="154" y="60" width="7" height="6" rx="1"/>
-        <rect x="167" y="60" width="7" height="6" rx="1"/>
+        <rect x="82" y="84" width="6" height="5" rx="1"/><rect x="114" y="84" width="6" height="5" rx="1"/>
+        <rect x="114" y="104" width="7" height="6" rx="1"/><rect x="82" y="105" width="6" height="6" rx="1"/>
+        <rect x="75.5" y="86" width="6" height="5" rx="1"/><rect x="95.5" y="121.5" width="7" height="5.5" rx="1"/>
+        <rect x="153.5" y="133.5" width="6" height="5.5" rx="1" class="map-exam"/>
+        <rect x="80" y="118" width="6" height="5" rx="1"/>
+        <rect x="105" y="77.5" width="5.5" height="5" rx="1"/><rect x="122.5" y="96" width="5.5" height="5" rx="1"/>
+        <rect x="122" y="89" width="5.5" height="5" rx="1"/><rect x="122" y="105" width="5.5" height="5.5" rx="1"/>
+        <rect x="111" y="147" width="5.5" height="5" rx="1"/><rect x="70.5" y="101" width="5.5" height="5" rx="1"/>
+        <rect x="110" y="120.5" width="5.5" height="5" rx="1"/><rect x="72" y="117" width="5.5" height="5.5" rx="1"/>
+        <rect x="142" y="116" width="7.5" height="6.5" rx="1"/><rect x="156" y="118.5" width="5.5" height="5" rx="1"/>
+        <rect x="159" y="103" width="5.5" height="5" rx="1"/><rect x="153" y="86.5" width="5.5" height="5" rx="1"/>
+        <rect x="169" y="119.5" width="5.5" height="5" rx="1"/><rect x="144.5" y="60.5" width="6.5" height="5.5" rx="1"/>
+        <rect x="130.5" y="77.5" width="8" height="6.5" rx="1"/><rect x="155.5" y="60.5" width="6.5" height="5.5" rx="1"/>
+        <rect x="168" y="60" width="8" height="6.5" rx="1"/>
       </g>
       <text x="100" y="102" class="map-plaza-label">ALUN-ALUN</text>
-      <circle cx="109" cy="68" r="3" class="map-fishing"/>
+      <circle cx="109" cy="70" r="3" class="map-fishing"/>
       <circle id="map-player" cx="100" cy="100" r="4.3"/>
       </svg>
-      <div class="map-legend"><span><i class="legend-player"></i> Kamu</span><span><i class="legend-building"></i> Desa</span><span><i class="legend-fishing"></i> Pancing</span></div>
+      <div class="map-legend"><span><i class="legend-player"></i> Kamu</span><span><i class="legend-building"></i> Desa</span><span><i class="legend-exam"></i> Ujian</span><span><i class="legend-fishing"></i> Pancing</span></div>
     </div>
   </aside>
   <div id="touch-controls" class="hidden" aria-label="Kontrol sentuh">

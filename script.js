@@ -140,7 +140,7 @@
       if (hillLocations.some(hill => Math.hypot(treeX - hill.x, treeZ - hill.z) < 44 * hill.scale)) continue;
       makeTree(treeX, treeZ, .78 + (i % 4) * .12);
     }
-    const outerClearings = [[69, 29], [88, 31], [92, 8], [84, -17], [71, -55], [88, -55], [108, -55], [104, -7], [107, 33]];
+    const outerClearings = [[69, 29], [88, 31], [92, 8], [84, -17], [71, -55], [88, -55], [108, -55], [52, -28], [68, -27], [107, 33]];
     for (let i = 0; i < 48; i++) {
       const angle = i * 2.399 + .7;
       const radius = 115 + (i % 4) * 4;
@@ -151,22 +151,6 @@
       if (hillLocations.some(hill => Math.hypot(x - hill.x, z - hill.z) < 44 * hill.scale)) continue;
       makeTree(x, z, .9 + (i % 3) * .12);
     }
-    const treeTrunks = new THREE.InstancedMesh(
-      cubeGeometry, material(0x80502e), treePositions.length
-    );
-    const treeCanopies = new THREE.InstancedMesh(
-      cubeGeometry, material(0x3c9850), treePositions.length
-    );
-    treePositions.forEach((tree, index) => {
-      setInstanceTransform(treeTrunks, index, tree.x, ground.position.y + 2 * tree.scale, tree.z, .62 * tree.scale, 4 * tree.scale, .62 * tree.scale);
-      setInstanceTransform(treeCanopies, index, tree.x, ground.position.y + 5 * tree.scale, tree.z, 2.7 * tree.scale, 2.4 * tree.scale, 2.45 * tree.scale);
-    });
-    treeTrunks.instanceMatrix.needsUpdate = true;
-    treeCanopies.instanceMatrix.needsUpdate = true;
-    treeTrunks.castShadow = true;
-    treeCanopies.castShadow = true;
-    scene.add(treeTrunks, treeCanopies);
-
     const hills = [];
     function makeHill(x, z, scale = 1) {
       const baseHalf = 36 * scale;
@@ -410,7 +394,7 @@
       },
       {
         name: 'Bu Tini', place: 'Warung Sehat', topic: 'Kebiasaan Sehat Sehari-hari',
-        pos: [-39, -20], item: [-42, -17], itemName: 'Bekal Sehat', itemColor: 0x80be65, kind: 'tini',
+        pos: [20, 78.5], item: [17, 81.5], itemName: 'Bekal Sehat', itemColor: 0x80be65, kind: 'tini',
         pages: [
           'Makan beragam makanan, minum air yang cukup, bergerak aktif, dan beristirahat merupakan kebiasaan yang mendukung kesehatan.',
           'Tidur yang cukup membantu tubuh beristirahat dan mendukung konsentrasi. Buat rutinitas tidur yang teratur dan kurangi layar menjelang waktu tidur.',
@@ -440,7 +424,7 @@
       },
       {
         name: 'Mbak Intan', place: 'Pos Relawan', topic: 'Mencari Bantuan & Keselamatan',
-        pos: [-38, 38], item: [-41, 41], itemName: 'Kartu Bantuan', itemColor: 0xe07161, kind: 'intan',
+        pos: [-38, 38], item: [-39, 41], itemName: 'Kartu Bantuan', itemColor: 0xe07161, kind: 'intan',
         pages: [
           'Mintalah bantuan saat merasa tidak aman, tertekan, sakit, atau bingung. Pilih orang dewasa yang mendengarkan dan menanggapi dengan serius.',
           'Jika orang pertama belum membantu, teruslah bercerita kepada orang tepercaya lain seperti keluarga, guru, konselor, atau tenaga kesehatan.',
@@ -495,6 +479,36 @@
       return group;
     }
 
+    function makeSportsField(x, z, width, length) {
+      const lineColor = 0xf5f2df;
+      const lineWidth = .2;
+      flatBox(x, z, width, length, 0x43894b, .025);
+      flatBox(x, z - length / 2, width, lineWidth, lineColor, .085);
+      flatBox(x, z + length / 2, width, lineWidth, lineColor, .085);
+      flatBox(x - width / 2, z, lineWidth, length, lineColor, .085);
+      flatBox(x + width / 2, z, lineWidth, length, lineColor, .085);
+      flatBox(x, z, width, lineWidth, lineColor, .085);
+
+      const penaltyWidth = 12;
+      const penaltyDepth = 5;
+      for (const end of [-1, 1]) {
+        const goalLine = z + end * length / 2;
+        const boxLine = goalLine - end * penaltyDepth;
+        flatBox(x, boxLine, penaltyWidth, lineWidth, lineColor, .085);
+        for (const side of [-1, 1]) {
+          flatBox(x + side * penaltyWidth / 2, goalLine - end * penaltyDepth / 2, lineWidth, penaltyDepth, lineColor, .085);
+          block(scene, x + side * 2, .95, goalLine, .16, 1.9, .16, lineColor);
+        }
+        block(scene, x, 1.9, goalLine, 4.16, .16, .16, lineColor);
+      }
+
+      const centerCircle = new THREE.Mesh(new THREE.RingGeometry(3.2, 3.4, 32), material(lineColor));
+      centerCircle.rotation.x = -Math.PI / 2;
+      centerCircle.position.set(x, .09, z);
+      scene.add(centerCircle);
+      return { x, z, width, length };
+    }
+
     const gate = new THREE.Group();
     gate.position.set(0, 0, -47);
     block(gate, -7, 3, 0, 1.8, 6, 1.8, 0xcf9d54);
@@ -513,15 +527,16 @@
     makeBuilding('POS KESEHATAN', 25, -19, 0xdce9e7, 0x76aebe, 9, 7);
     makeBuilding('BALAI KONSELING', 26, 10, 0xf0c285, 0xc4753d, 10, 8);
     makeBuilding('SEKOLAH', -22, 12, 0xf0d191, 0xa45740, 9, 8);
-    makeBuilding('LITERASI DIGITAL', -30, -4, 0xb4e1d3, 0x488b83, 9, 7);
-    makeBuilding('PENDOPO WARGA', 5, 23, 0xe9d9b2, 0x927345, 10, 8);
-    const examBuilding = makeBuilding('GEDUNG UJIAN', 0, 9, 0xa6c8d6, 0x4c718e, 10, 8);
-    makeBuilding('BALAI TAMAN', -23, -29, 0xc7dda4, 0x648f4d, 8, 7);
+    makeBuilding('LITERASI DIGITAL', -32, -17, 0xb4e1d3, 0x488b83, 9, 7);
+    const examLocation = { x: 84, z: 54 };
+    makeBuilding('PENDOPO WARGA', -2, 36, 0xe9d9b2, 0x927345, 10, 8);
+    makeBuilding('GEDUNG UJIAN', examLocation.x, examLocation.z, 0xa6c8d6, 0x4c718e, 10, 8);
+    makeBuilding('BALAI TAMAN', -26, 30, 0xc7dda4, 0x648f4d, 8, 7);
     makeBuilding('PERPUSTAKAAN', 12, -30, 0xd4c59f, 0x7d6953, 8, 7);
-    makeBuilding('LAPANGAN OLAHRAGA', -8, 13, 0xb9d68b, 0x55854e, 8, 7);
-    makeBuilding('RUMAH AMAN', 38, -13, 0xe2c6b3, 0x97635c, 8, 7);
+    const sportsField = makeSportsField(20, 56, 28, 18);
+    makeBuilding('RUMAH AMAN', 38, -2, 0xe2c6b3, 0x97635c, 8, 7);
     makeBuilding('SANGGAR KREATIF', 38, 12, 0xeac88c, 0xb56748, 8, 7);
-    makeBuilding('WARUNG SEHAT', -39, -28, 0xe6d6a5, 0x9e7447, 8, 7);
+    makeBuilding('WARUNG SEHAT', 20, 74, 0xe6d6a5, 0x9e7447, 8, 7);
     makeBuilding('POS SAHABAT', -40, 5, 0xb8d8dd, 0x638795, 8, 7);
     makeBuilding('KEBUN WARGA', 20, 34, 0xc8d89a, 0x69864c, 8, 7);
     makeBuilding('POS RELAWAN', -38, 30, 0xe0c2b9, 0x9c5e56, 8, 7);
@@ -531,7 +546,7 @@
     makeBuilding('RUMAH WARGA 3', 84, -17, 0xd5b5a0, 0x8c6258, 8, 7);
     makeBuilding('RUMAH WARGA 4', 107, 33, 0xe2cc9c, 0x8d7046, 8, 7);
     makeBuilding('KANDANG AYAM', 71, -55, 0xd4c29b, 0x856844, 10, 8);
-    makeBuilding('KANDANG SAPI', 104, -7, 0xcdbb91, 0x735b42, 12, 10);
+    makeBuilding('KANDANG SAPI', 52, -28, 0xcdbb91, 0x735b42, 12, 10);
     makeBuilding('KOPERASI DESA', 88, -55, 0xc9d9a8, 0x63814b, 10, 8);
     makeBuilding('DAPUR SPPG', 108, -55, 0xe7d2a4, 0x9b6949, 12, 10);
     function collidesWithBuilding(x, z) {
@@ -566,36 +581,41 @@
     makeRoadRoute([[0, -49], [0, -12]], 4.4);
     makeRoadRoute([[-46, -10], [-8, -10]], 4.2);
     makeRoadRoute([[8, -10], [46, -10]], 4.2);
-    makeRoadRoute([[-48, -10], [-48, 44]], 4);
-    roadSegments.push({ x1: -48, z1: -35, x2: 30, z2: -35, width: 3.8 });
-    flatBox(-9, -35, 4.35, 78.35, 0x3eadd0, .012, Math.PI / 2);
-    flatBox(-9, -35, 3.8, 78, 0x3eadd0, .045, Math.PI / 2);
+    makeRoadRoute([[-48, -23], [-48, 32], [-53, 32], [-53, 44], [-48, 44]], 4);
     makeRoadRoute([[-15, -10], [-15, 42]], 3.8);
-    makeRoadRoute([[-26, -10], [-26, 8]], 2.5);
-    makeRoadRoute([[7, -10], [7, 14]], 3.8);
-    makeRoadRoute([[7, 14], [46, 14]], 4.2);
-    makeRoadRoute([[46, -10], [46, 30]], 4);
+    makeRoadRoute([[-26, -10], [-26, 6.4]], 2.5);
+    makeRoadRoute([[7, -10], [7, 12]], 3.8);
+    makeRoadRoute([[7, 12], [8, 12], [8, 29], [0, 29]], 3.8);
+    makeRoadRoute([[8, 26], [46, 26]], 4.2);
+    makeRoadRoute([[46, -20.5], [46, 30]], 4);
     makeRoadRoute([[-48, 44], [28, 44]], 4);
+    makeRoadRoute([[-38, 44], [-38, 35]], 2.8);
+    makeRoadRoute([[20, 44], [20, 39]], 2.8);
     makeRoadRoute([[7, 32], [7, 44]], 3.4);
-    makeRoadRoute([[-15, 20], [-8, 20]], 2.5);
+    makeRoadRoute([[0, 44], [0, 68], [20, 68]], 3.2);
+    makeRoadRoute([[76, 40], [76, 60.5], [84, 60.5]], 3.2);
+    makeRoadRoute([[26, 26], [26, 15.5]], 2.8);
     makeRoadRoute([[-48, 13], [-40, 13]], 2.5);
-    makeRoadRoute([[-48, -20], [-39, -20]], 2.5);
-    makeRoadRoute([[46, -5], [38, -5]], 2.5);
-    makeRoadRoute([[46, 20], [38, 20]], 2.5);
-    roadSegments.push({ x1: 6.4, z1: -35, x2: 6.4, z2: -32.7, width: 2.5 });
-    flatBox(6.4, -33.85, 3.05, 2.85, 0x3eadd0, .012);
-    flatBox(6.4, -33.85, 2.5, 2.3, 0x3eadd0, .045);
+    makeRoadRoute([[-48, -20], [-39, -20], [-39, -24.2]], 2.5);
+    makeRoadRoute([[-39, -20], [-39, -11], [-32, -11]], 2.8);
+    makeRoadRoute([[-48, -23], [-31, -23], [-31, -24.5], [-29, -24.5]], 2.8);
+    makeRoadRoute([[46, 4], [38, 4]], 2.5);
+    makeRoadRoute([[46, 17.5], [38, 17.5]], 2.5);
     makeRoadRoute([[6.4, -31.2], [6.4, -23]], 2.5);
     makeRoadRoute([[6.4, -23], [12, -23]], 2.5);
+    makeRoadRoute([[0, -31.2], [6.4, -31.2]], 2.5);
+    makeRoadRoute([[12, -23], [12, -25.5]], 2.5);
     makeRoadRoute([[46, 28], [60, 28], [60, 40], [115, 40]], 4);
     makeRoadRoute([[69, 40], [69, 35]], 2.8);
     makeRoadRoute([[88, 40], [88, 35.5]], 2.8);
     makeRoadRoute([[107, 40], [107, 37]], 2.8);
     makeRoadRoute([[115, 40], [115, -24]], 3.8);
-    makeRoadRoute([[115, 8], [96.5, 8]], 3);
-    makeRoadRoute([[60, -17], [80, -17]], 3);
+    makeRoadRoute([[115, 8], [100, 8], [100, 14], [92, 14]], 3);
+    makeRoadRoute([[92, 14], [92, 13.6]], 3);
+    makeRoadRoute([[60, -17], [76, -17], [76, -10], [84, -10]], 3);
+    makeRoadRoute([[76, -17], [76, 2.2], [115, 2.2]], 3);
+    makeRoadRoute([[46, -20.5], [52, -20.5]], 3);
     makeRoadRoute([[60, 40], [60, -29], [60, -46.5], [115, -46.5]], 3.4);
-    makeRoadRoute([[115, -2], [105, -2]], 3);
     makeRoadRoute([[0, -49], [10, -49], [14, -45]], 3);
 
     function distanceToRoad(x, z, segment) {
@@ -607,11 +627,40 @@
     }
 
     const buildingKeepouts = [
-      [-22, -20], [25, -19], [26, 10], [-22, 12], [-30, -4], [5, 23], [0, 9],
-      [-23, -29], [12, -30], [-8, 13], [38, -13], [38, 12], [-39, -28],
+      [-22, -20], [25, -19], [26, 10], [-22, 12], [-32, -17], [-2, 36], [examLocation.x, examLocation.z],
+      [-26, 30], [12, -30], [20, 56], [38, -2], [38, 12], [20, 74],
       [-40, 5], [20, 34], [-38, 30], [69, 29], [88, 31], [92, 8], [84, -17],
-      [107, 33], [71, -55], [88, -55], [108, -55], [104, -7]
+      [107, 33], [71, -55], [88, -55], [108, -55], [52, -28]
     ];
+    for (let index = treePositions.length - 1; index >= 0; index--) {
+      const tree = treePositions[index];
+      const canopyClearance = 1.35 * tree.scale + .3;
+      const onRoad = roadSegments.some(segment =>
+        distanceToRoad(tree.x, tree.z, segment) < segment.width / 2 + canopyClearance
+      );
+      const nearBuilding = buildingColliders.some(building =>
+        Math.abs(tree.x - building.x) < building.halfWidth + canopyClearance
+        && Math.abs(tree.z - building.z) < building.halfDepth + canopyClearance
+      );
+      const nearField = Math.abs(tree.x - sportsField.x) < sportsField.width / 2 + canopyClearance
+        && Math.abs(tree.z - sportsField.z) < sportsField.length / 2 + canopyClearance;
+      if (onRoad || nearBuilding || nearField) treePositions.splice(index, 1);
+    }
+    const treeTrunks = new THREE.InstancedMesh(
+      cubeGeometry, material(0x80502e), treePositions.length
+    );
+    const treeCanopies = new THREE.InstancedMesh(
+      cubeGeometry, material(0x3c9850), treePositions.length
+    );
+    treePositions.forEach((tree, index) => {
+      setInstanceTransform(treeTrunks, index, tree.x, ground.position.y + 2 * tree.scale, tree.z, .62 * tree.scale, 4 * tree.scale, .62 * tree.scale);
+      setInstanceTransform(treeCanopies, index, tree.x, ground.position.y + 5 * tree.scale, tree.z, 2.7 * tree.scale, 2.4 * tree.scale, 2.45 * tree.scale);
+    });
+    treeTrunks.instanceMatrix.needsUpdate = true;
+    treeCanopies.instanceMatrix.needsUpdate = true;
+    treeTrunks.castShadow = true;
+    treeCanopies.castShadow = true;
+    scene.add(treeTrunks, treeCanopies);
     const flowerColors = [0xf8e16c, 0xf3a4b8, 0xf5f2e7, 0xf3a35a, 0xb9a4ed];
     const flowers = [];
     for (let row = -5; row <= 5; row++) {
@@ -621,7 +670,8 @@
         if (Math.hypot(x, z) < 16 || Math.abs(z + 38) < 4) continue;
         if (Math.abs(z - riverCenterAt(x)) < riverHalfWidth + .8) continue;
         if (roadSegments.some(segment => distanceToRoad(x, z, segment) < segment.width / 2 + 1.8)) continue;
-        if (buildingKeepouts.some(([bx, bz]) => Math.hypot(x - bx, z - bz) < 7)) continue;
+        if (buildingKeepouts.some(([bx, bz]) => Math.hypot(x - bx, z - bz) < 9)) continue;
+        if (Math.abs(x - sportsField.x) < sportsField.width / 2 + 1 && Math.abs(z - sportsField.z) < sportsField.length / 2 + 1) continue;
         if (npcData.some(npc => Math.hypot(x - npc.pos[0], z - npc.pos[1]) < 3.8)) continue;
         if (treePositions.some(tree => Math.hypot(x - tree.x, z - tree.z) < tree.clearance)) continue;
         flowers.push({ x, z, colorIndex: (row * 3 + column * 5 + 60) % flowerColors.length });
@@ -732,8 +782,8 @@
       makeChicken(67, -64, .78), makeChicken(72, -63, .88),
       makeChicken(76, -67, .72), makeChicken(70, -69, .8)
     ];
-    makePen(104, 7, 20, 16);
-    const cows = [makeCow(99, 5, .82), makeCow(107, 9, .95), makeCow(104, 1, .72)];
+    makePen(68, -27, 10, 10);
+    const cows = [makeCow(65, -28, .82), makeCow(70, -27, .95), makeCow(67, -24, .72)];
 
     function makeBird(x, z, color, scale, baseY, radiusX, radiusZ, speed, phase) {
       const group = new THREE.Group();
@@ -1006,11 +1056,11 @@
 
     const examMarker = new THREE.Group();
     const examOrb = new THREE.Mesh(new THREE.BoxGeometry(.8, .8, .8), material(0xffd966, { emissive: 0x9e6b14, emissiveIntensity: .35 }));
-    examOrb.position.set(0, 4.2, 8.7);
+    examOrb.position.set(examLocation.x, 4.2, examLocation.z + 4.9);
     examMarker.add(examOrb);
     const examLabel = new THREE.Sprite(new THREE.SpriteMaterial({ map: makeSignTexture('UJIAN AKHIR', '#fff0bd'), depthTest: false }));
     examLabel.scale.set(3.2, .75, 1);
-    examLabel.position.set(0, 4.9, 8.7);
+    examLabel.position.set(examLocation.x, 4.9, examLocation.z + 4.9);
     examMarker.add(examLabel);
     scene.add(examMarker);
 
@@ -1048,6 +1098,7 @@
     const playerNameInput = document.querySelector('#player-name');
     const profileError = document.querySelector('#profile-error');
     const keys = new Set();
+    let jumpVelocity = 0;
     let touchForward = 0;
     let touchSideways = 0;
     let moveStickPointer = null;
@@ -1421,7 +1472,7 @@
       const position = target.type === 'npc' ? npcs[target.index].group.position
         : target.type === 'item' ? npcs[target.index].item.position
           : target.type === 'fishing' ? fishingSpot
-            : new THREE.Vector3(0, 0, 9);
+            : new THREE.Vector3(examLocation.x, 0, examLocation.z + 4.9);
       const maxDistance = target.type === 'npc' ? 4.4 : target.type === 'item' ? 3.5 : target.type === 'fishing' ? 6 : 8;
       return Math.hypot(playerWorldPosition.x - position.x, playerWorldPosition.z - position.z) < maxDistance;
     }
@@ -1447,7 +1498,7 @@
           ? [{ target: { type: 'item', index }, position: state.item.position }]
           : []),
         { target: { type: 'fishing' }, position: new THREE.Vector3(14, 2.7, -46.88) },
-        { target: { type: 'exam' }, position: new THREE.Vector3(0, 4.2, 9) }
+        { target: { type: 'exam' }, position: new THREE.Vector3(examLocation.x, 4.2, examLocation.z + 4.9) }
       ];
       for (const candidate of candidates) {
         if (!targetWithinReach(candidate.target)) continue;
@@ -1579,7 +1630,7 @@
           nearestDistance = dist;
         }
       });
-      const examDistance = Math.hypot(player.x, player.z - 9);
+      const examDistance = Math.hypot(player.x - examLocation.x, player.z - examLocation.z - 4.9);
       if (examDistance < 8 && examDistance < nearestDistance) nearest = { type: 'exam', distance: examDistance };
       const fishingDistance = Math.hypot(player.x - fishingSpot.x, player.z - fishingSpot.z);
       if (fishingDistance < 6 && fishingDistance < nearestDistance) nearest = { type: 'fishing', distance: fishingDistance };
@@ -1627,7 +1678,7 @@
       }
     }
     document.addEventListener('keydown', event => {
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(event.key)) event.preventDefault();
+      if (gameStarted && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(event.key)) event.preventDefault();
       keys.add(event.code);
       if (fishingState.active) {
         if (event.code === 'Escape') {
@@ -1637,6 +1688,10 @@
           else if (fishingState.phase === 'bite') pullFishingLine();
         }
         return;
+      }
+      if (event.code === 'Space' && !event.repeat && canControlPlayer()) {
+        const groundHeight = 1.7 + surfaceHeightAt(playerWorldPosition.x, playerWorldPosition.z);
+        if (playerWorldPosition.y <= groundHeight + .05) jumpVelocity = 8.8;
       }
       if (event.code === 'Escape' && gameStarted && !modalOpen && !gamePaused) {
         gamePaused = true;
@@ -1815,7 +1870,17 @@
         if (!collidesWithBuilding(position.x, nextZ)) position.z = nextZ;
         if (moving) playerFacing.set(moveX, 0, moveZ).normalize();
         const playerSurface = surfaceHeightAt(position.x, position.z);
-        position.y = THREE.MathUtils.damp(position.y, 1.7 + playerSurface, 10, delta);
+        const groundHeight = 1.7 + playerSurface;
+        if (jumpVelocity > 0 || position.y > groundHeight + .01) {
+          jumpVelocity -= 22 * delta;
+          position.y += jumpVelocity * delta;
+          if (position.y <= groundHeight) {
+            position.y = groundHeight;
+            jumpVelocity = 0;
+          }
+        } else {
+          position.y = THREE.MathUtils.damp(position.y, groundHeight, 10, delta);
+        }
       }
       if (gameStarted) {
         walkAmount = THREE.MathUtils.damp(walkAmount, moving ? 1 : 0, 10, delta);
@@ -1829,7 +1894,8 @@
         mapPlayerMarker.setAttribute('cx', String(100 + playerPosition.x * .65));
         mapPlayerMarker.setAttribute('cy', String(100 + playerPosition.z * .65));
         const avatarSurface = surfaceHeightAt(playerPosition.x, playerPosition.z);
-        playerAvatar.position.set(playerPosition.x, THREE.MathUtils.damp(playerAvatar.position.y, avatarSurface, 10, delta), playerPosition.z);
+        const jumpHeight = playerPosition.y - (1.7 + avatarSurface);
+        playerAvatar.position.set(playerPosition.x, THREE.MathUtils.damp(playerAvatar.position.y, avatarSurface + jumpHeight, 10, delta), playerPosition.z);
         playerAvatar.rotation.y = Math.atan2(playerFacing.x, playerFacing.z);
         cameraDistance = THREE.MathUtils.damp(cameraDistance, targetCameraDistance, 8, delta);
         camera.position.set(
