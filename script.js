@@ -374,7 +374,7 @@
       },
       {
         name: 'Pak Dedi', place: 'Rumah Aman Warga', topic: 'Tekanan Teman & Pilihan Aman',
-        pos: [38, -5], item: [41, -2], itemName: 'Kartu Berani Menolak', itemColor: 0x78a4da, kind: 'dedi',
+        pos: [44, -8], item: [47, -5], itemName: 'Kartu Berani Menolak', itemColor: 0x78a4da, kind: 'dedi',
         pages: [
           'Tekanan teman dapat membuat keputusan terasa sulit. Kamu tetap berhak memilih hal yang aman walaupun teman-teman memilih berbeda.',
           'Siapkan jawaban singkat seperti “Tidak, terima kasih” atau “Aku memilih pulang”. Kamu tidak perlu berdebat panjang untuk mempertahankan batasanmu.',
