@@ -2,8 +2,8 @@
 
     const canvas = document.querySelector('#world');
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xb8e6e8);
-    scene.fog = new THREE.Fog(0xb8e6e8, 150, 330);
+    scene.background = new THREE.Color(0xbfe3f5);
+    scene.fog = new THREE.Fog(0xbfe3f5, 150, 330);
 
     const camera = new THREE.PerspectiveCamera(68, window.innerWidth / window.innerHeight, 0.1, 360);
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -13,8 +13,8 @@
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-    scene.add(new THREE.HemisphereLight(0xe8faff, 0x68884c, 2.05));
-    const sunlight = new THREE.DirectionalLight(0xfff0cc, 2.5);
+    scene.add(new THREE.HemisphereLight(0xf5f3e8, 0x4d7a2e, 2.05));
+    const sunlight = new THREE.DirectionalLight(0xfff2d2, 2.5);
     sunlight.position.set(-24, 42, -20);
     sunlight.castShadow = true;
     sunlight.shadow.mapSize.set(1024, 1024);
@@ -107,7 +107,7 @@
       return mesh;
     }
 
-    const ground = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), material(0x8ddc59));
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), material(0x9acd6e));
     ground.rotation.x = -Math.PI / 2;
     ground.position.y = -.08;
     ground.receiveShadow = true;
@@ -115,11 +115,11 @@
     const riverCenterAt = x => -38 + Math.sin(x * .075) * 1.1;
     const riverHalfWidth = 4.6;
 
-    const plaza = new THREE.Mesh(new THREE.CylinderGeometry(13, 13, .16, 16), material(0xe5cf97));
+    const plaza = new THREE.Mesh(new THREE.CylinderGeometry(13, 13, .16, 16), material(0xe8dcc0));
     plaza.position.set(0, .01, 0);
     plaza.receiveShadow = true;
     scene.add(plaza);
-    const plazaGreen = new THREE.Mesh(new THREE.CylinderGeometry(8.7, 8.7, .07, 16), material(0x8bd264));
+    const plazaGreen = new THREE.Mesh(new THREE.CylinderGeometry(8.7, 8.7, .07, 16), material(0x8ab65b));
     plazaGreen.position.set(0, .12, 0);
     plazaGreen.receiveShadow = true;
     scene.add(plazaGreen);
@@ -435,13 +435,13 @@
     ];
 
     const buildingPalette = [
-      { color: 0xe9a64e, roof: 0xb95039 },
-      { color: 0xd98972, roof: 0x8c4d64 },
-      { color: 0xc9dce0, roof: 0x6b9eb1 },
-      { color: 0xe8c878, roof: 0x99713b },
+      { color: 0xe8bd77, roof: 0xc2410c },
+      { color: 0xd99b7c, roof: 0x8b5a2b },
+      { color: 0xd6e0d5, roof: 0x527b78 },
+      { color: 0xe8cc8d, roof: 0x8b5a2b },
       { color: 0xd2a879, roof: 0x75513b },
-      { color: 0xa8d5ca, roof: 0x417c75 },
-      { color: 0xc7b5dc, roof: 0x745a91 }
+      { color: 0xa8c6a0, roof: 0x4d7a2e },
+      { color: 0xc7b5a0, roof: 0x745a45 }
     ];
     function makeSignTexture(text, background = '#f7d77c') {
       const c = document.createElement('canvas');
@@ -650,7 +650,7 @@
       cubeGeometry, material(0x80502e), treePositions.length
     );
     const treeCanopies = new THREE.InstancedMesh(
-      cubeGeometry, material(0x3c9850), treePositions.length
+      cubeGeometry, material(0x4d7a2e), treePositions.length
     );
     treePositions.forEach((tree, index) => {
       setInstanceTransform(treeTrunks, index, tree.x, ground.position.y + 2 * tree.scale, tree.z, .62 * tree.scale, 4 * tree.scale, .62 * tree.scale);
@@ -823,7 +823,7 @@
       const angle = -Math.atan((Math.sin((centerX + 5) * .075) * 1.1 - Math.sin((centerX - 5) * .075) * 1.1) / 10);
       const water = new THREE.Mesh(
         new THREE.PlaneGeometry(10.6, 9.2),
-        new THREE.MeshStandardMaterial({ color: 0x3eadd0, roughness: .28, metalness: .08, transparent: true, opacity: .82, depthWrite: false })
+        new THREE.MeshStandardMaterial({ color: 0x62aebe, roughness: .28, metalness: .08, transparent: true, opacity: .82, depthWrite: false })
       );
       water.rotation.order = 'YXZ';
       water.rotation.set(-Math.PI / 2, angle, 0);
