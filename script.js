@@ -1811,16 +1811,35 @@
       modalOpen = true;
       const finalScore = Math.round((quizScore / quizQuestions.length) * 100);
       document.querySelector('#result-score').textContent = `${finalScore} / 100`;
+      const evaluation = document.querySelector('#result-evaluation');
+      evaluation.innerHTML = `<strong>Evaluasi:</strong> Kamu menjawab <strong>${quizScore} dari ${quizQuestions.length}</strong> pertanyaan dengan benar. `;
       if (quizScore >= Math.ceil(quizQuestions.length * .8)) {
         document.querySelector('#result-eyebrow').textContent = 'Kelulusan Resmi';
         document.querySelector('#result-title').textContent = 'Selamat, Duta Muda!';
         document.querySelector('#result-copy').innerHTML = 'Kamu resmi menyandang gelar<br><strong style="color:#ffe28c;font-size:1.35rem">Duta Muda Desa Remaja</strong><br>Terus sebarkan sikap saling menghargai dan pilihan yang sehat.';
+        evaluation.innerHTML += 'Pemahamanmu sudah sangat baik. Pertahankan sikap sehat dalam pergaulan, kesehatan, dan mencari dukungan.';
       } else {
         document.querySelector('#result-eyebrow').textContent = 'Terus Belajar';
         document.querySelector('#result-title').textContent = 'Sedikit Lagi!';
         document.querySelector('#result-copy').textContent = 'Nilai kelulusan adalah 80. Ulangi permainan untuk meninjau materi dan mencoba ujian lagi.';
+        evaluation.innerHTML += 'Masih ada materi yang perlu diperkuat. Pelajari kembali jawaban yang salah dan terapkan langkah aman dalam kehidupan sehari-hari.';
       }
+      const savedReflection = localStorage.getItem('desaRemajaReflection') || '';
+      document.querySelector('#reflection-input').value = savedReflection;
+      document.querySelector('#reflection-status').textContent = '';
     }
+    document.querySelector('#reflection-save').addEventListener('click', () => {
+      const input = document.querySelector('#reflection-input');
+      const reflectionStatus = document.querySelector('#reflection-status');
+      const reflection = input.value.trim();
+      if (!reflection) {
+        reflectionStatus.textContent = 'Tuliskan refleksimu terlebih dahulu.';
+        input.focus();
+        return;
+      }
+      localStorage.setItem('desaRemajaReflection', reflection);
+      reflectionStatus.textContent = 'Refleksi berhasil disimpan.';
+    });
     document.querySelector('#restart-button').addEventListener('click', () => window.location.reload());
 
     function updatePrompt() {
